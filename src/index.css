@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Manrope:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&family=Caveat:wght@500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Fraunces", Georgia, Cambria, serif;
+  --font-mono: "Space Mono", ui-monospace, monospace;
+  --font-script: "Caveat", cursive;
+
+  /* Wedding Party Invitation palette — see DESIGN.md for rationale */
+  --color-sky: #6FB4DE;
+  --color-sky-light: #DCEEF7;
+  --color-sky-dark: #3E7FA6;
+  --color-ink: #171A1C;
+  --color-cream: #FBF6EC;
+  --color-gold: #C9A15D;
+  --color-navy: #1F3A52;
+}
+
+@layer utilities {
+  .ticket-notch {
+    background:
+      radial-gradient(circle at 0 50%, transparent 10px, var(--color-cream) 10.5px) left / 50% 100% no-repeat,
+      radial-gradient(circle at 100% 50%, transparent 10px, var(--color-cream) 10.5px) right / 50% 100% no-repeat;
+  }
+  .perforation {
+    background-image: repeating-linear-gradient(to bottom, transparent 0 6px, rgba(23, 26, 28, 0.18) 6px 8px);
+  }
+  .map-cartoon-filter {
+    filter: saturate(1.4) hue-rotate(-6deg) contrast(1.05) brightness(1.03);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(31, 58, 82, 0.25);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(31, 58, 82, 0.4);
+}
