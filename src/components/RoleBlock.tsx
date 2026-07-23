@@ -8,12 +8,21 @@ import {
   MessageSquareText,
   Sparkles,
   Users,
+  Home,
+  Heart,
+  Flower2,
+  Wand2,
+  PartyPopper,
+  Handshake,
+  Briefcase,
+  Trophy,
   LucideIcon,
 } from 'lucide-react';
 import { ROLES } from '../data';
 import { RoleKey } from '../types';
 import { resolveRoleFromSearch } from '../roleFromUrl';
 import { resolveNameFromSearch } from '../nameFromUrl';
+import { resolveGuestFromSearch } from '../guestFromUrl';
 import ScrollReveal from './ScrollReveal';
 import SectionHeader from './SectionHeader';
 
@@ -26,6 +35,14 @@ const ICONS: Record<string, LucideIcon> = {
   MessageSquareText,
   Sparkles,
   Users,
+  Home,
+  Heart,
+  Flower2,
+  Wand2,
+  PartyPopper,
+  Handshake,
+  Briefcase,
+  Trophy,
 };
 
 const ACCENT_STYLES: Record<string, { card: string; badge: string; iconWrap: string; text: string }> = {
@@ -58,8 +75,9 @@ const ACCENT_STYLES: Record<string, { card: string; badge: string; iconWrap: str
 const DARK_ACCENTS = new Set(['navy', 'ink']);
 
 export default function RoleBlock() {
-  const [roleKey] = useState<RoleKey>(() => resolveRoleFromSearch(window.location.search));
-  const [name] = useState<string | null>(() => resolveNameFromSearch(window.location.search));
+  const [guest] = useState(() => resolveGuestFromSearch(window.location.search));
+  const [roleKey] = useState<RoleKey>(() => guest?.role ?? resolveRoleFromSearch(window.location.search));
+  const [name] = useState<string | null>(() => guest?.name ?? resolveNameFromSearch(window.location.search));
 
   const role = ROLES[roleKey];
   const Icon = ICONS[role.icon] ?? Ticket;
@@ -72,10 +90,10 @@ export default function RoleBlock() {
     : role.blurb;
 
   return (
-    <section className="py-14 px-6 bg-gradient-to-b from-[var(--color-sky-light)] to-[#EAF4FA]">
+    <section className="py-14 px-6 bg-gradient-to-b from-[var(--color-cream)] via-[var(--color-sky-light)] to-[#EAF4FA]">
       <ScrollReveal>
         {name && (
-          <p className="text-center font-script text-2xl text-[var(--color-gold)] mb-1">
+          <p className="text-center font-script text-3xl text-[var(--color-gold)] mb-2">
             Привет, {name}!
           </p>
         )}
@@ -94,7 +112,7 @@ export default function RoleBlock() {
             {role.isSpecial ? 'Особая роль' : 'Роль'}
           </span>
 
-          <h3 className={`font-serif text-2xl font-semibold mt-4 ${isDark ? 'text-white' : 'text-[var(--color-ink)]'}`}>
+          <h3 className={`font-serif text-2xl font-bold mt-4 ${isDark ? 'text-white' : 'text-[var(--color-ink)]'}`}>
             {role.title}
           </h3>
 

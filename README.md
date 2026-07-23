@@ -4,10 +4,32 @@
 2026). Vite + React + TypeScript + Tailwind CSS v4. Дизайн-система описана в
 [`DESIGN.md`](./DESIGN.md).
 
-## Роли и имя по URL
+## Персональные ссылки по гостю
 
-Контент блока «Твоя роль» (и билет в шапке) зависит от параметра `role` в
-адресной строке:
+Самый простой способ — параметр `guest` со slug'ом гостя из
+[`src/guests.ts`](./src/guests.ts) (`GUESTS`). Он сразу подставляет и имя, и
+роль:
+
+```
+https://<домен>/?guest=andrey     — Андрей, Отец жениха
+https://<домен>/?guest=dmitriy    — Дмитрий, Докладчик
+```
+
+Полный список гостей и их slug'и — в `GUESTS` (`src/guests.ts`). Slug —
+это транслитерация имени (см. [`src/transliterate.ts`](./src/transliterate.ts)),
+с добавленным суффиксом-ролью там, где несколько гостей носят одно и то же
+имя (например `anastasiya-guest` и `anastasiya-bridesmaid`,
+`kirill-guest` и `kirill-nazar`, `elizaveta-bridesmaid` и
+`elizaveta-family`).
+
+Если гость входит в одну из групп в `FAMILIES` (`src/guests.ts`), в шапке
+под билетом появляется кнопка «Кто моя семья?» — открывает попап со списком
+членов семьи и их ролями (`src/components/FamilyPopup.tsx`).
+
+## Роли и имя по URL (ручной режим)
+
+Тот же результат можно собрать вручную двумя параметрами — удобно для ссылок
+без привязки к конкретному гостю из списка:
 
 ```
 https://<домен>/?role=guest         — Гость (по умолчанию)
@@ -18,6 +40,16 @@ https://<домен>/?role=coordinator   — Распорядитель
 https://<домен>/?role=speaker       — Докладчик
 https://<домен>/?role=bridesmaid    — Подруга невесты
 https://<домен>/?role=groomsman     — Друг жениха
+https://<домен>/?role=groom-father  — Отец жениха
+https://<домен>/?role=groom-mother  — Мама жениха
+https://<домен>/?role=bride-mother  — Мама невесты
+https://<домен>/?role=family-friend — Подруга семьи
+https://<домен>/?role=style-icon    — Икона стиля
+https://<домен>/?role=hype-creator  — Создатель хайпа
+https://<домен>/?role=friend-of-nazar     — Кореш Назара
+https://<домен>/?role=friend-of-kirill    — Кореш Кирилла
+https://<домен>/?role=financial-director  — Финансовый директор
+https://<домен>/?role=sports-star   — Звезда спорта
 ```
 
 Список ролей и их описания — в [`src/data.ts`](./src/data.ts) (`ROLES`).
@@ -34,7 +66,8 @@ https://<домен>/?role=dj&name=Иван
 
 Любой `blurb` в `ROLES` (`src/data.ts`) может содержать токен `{name}` —
 он будет автоматически заменён на имя из ссылки (или на «дорогой гость»,
-если параметра нет).
+если параметра нет). `?guest=` подставляет имя автоматически, так что
+токен `{name}` работает и там.
 
 ## Что нужно донастроить вручную
 

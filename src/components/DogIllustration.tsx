@@ -1,55 +1,66 @@
 // Decorative cartoon dog-in-glasses mascot for the ticket hero. Pure inline
-// SVG (no external asset) so it themes with the palette via CSS vars.
+// SVG (no external asset), strictly two-tone (gold fur + ink linework) so it
+// reads as a bold sticker-style mascot rather than a soft illustration.
 export default function DogIllustration({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 120 120"
       className={className}
       role="img"
-      aria-label="Милый пёс в очках"
+      aria-label="Мультяшный пёс в очках"
     >
+      {/* Floppy ears */}
       <path
-        d="M27 45c-15-6-24 9-20 28 3 14 15 21 26 17-10-13-13-30-6-45Z"
+        d="M24 50c-17-4-27 12-21 32 4 13 17 19 28 14-11-14-14-32-7-46Z"
         fill="var(--color-gold)"
         stroke="var(--color-ink)"
-        strokeWidth="2.5"
+        strokeWidth="3.5"
         strokeLinejoin="round"
       />
       <path
-        d="M93 45c15-6 24 9 20 28-3 14-15 21-26 17 10-13 13-30 6-45Z"
+        d="M96 50c17-4 27 12 21 32-4 13-17 19-28 14 11-14 14-32 7-46Z"
         fill="var(--color-gold)"
         stroke="var(--color-ink)"
-        strokeWidth="2.5"
+        strokeWidth="3.5"
         strokeLinejoin="round"
       />
 
-      <circle cx="60" cy="62" r="38" fill="#FBF6EC" stroke="var(--color-ink)" strokeWidth="2.5" />
+      {/* Big round head */}
+      <circle cx="60" cy="63" r="36" fill="var(--color-gold)" stroke="var(--color-ink)" strokeWidth="3.5" />
 
-      <circle cx="37" cy="77" r="6.5" fill="var(--color-blush)" opacity="0.75" />
-      <circle cx="83" cy="77" r="6.5" fill="var(--color-blush)" opacity="0.75" />
-
-      <ellipse cx="60" cy="81" rx="16" ry="12" fill="#FFFDF8" stroke="var(--color-ink)" strokeWidth="2" />
-      <ellipse cx="60" cy="75.5" rx="5.5" ry="4.5" fill="var(--color-ink)" />
+      {/* Muzzle outline (no fill — head color shows through) */}
       <path
-        d="M60 80v3.5M53 89c3 3 11 3 14 0"
+        d="M43 74c4 9 12 14 17 14s13-5 17-14c-6 5-28 5-34 0Z"
         fill="none"
         stroke="var(--color-ink)"
-        strokeWidth="2"
-        strokeLinecap="round"
+        strokeWidth="3"
+        strokeLinejoin="round"
       />
 
-      <circle cx="45" cy="58" r="12.5" fill="var(--color-sky-light)" fillOpacity="0.85" stroke="var(--color-ink)" strokeWidth="3" />
-      <circle cx="75" cy="58" r="12.5" fill="var(--color-sky-light)" fillOpacity="0.85" stroke="var(--color-ink)" strokeWidth="3" />
+      {/* Nose + happy open smile */}
+      <ellipse cx="60" cy="77" rx="6" ry="4.5" fill="var(--color-ink)" />
       <path
-        d="M57.5 58h5M29 55.5l-6-2M91 55.5l6-2"
+        d="M60 81.5v3M48 89c4 5 20 5 24 0"
         fill="none"
         stroke="var(--color-ink)"
         strokeWidth="3"
         strokeLinecap="round"
       />
 
-      <path d="M51 99l9-5.5 9 5.5-9 4-9-4Z" fill="var(--color-navy)" />
-      <circle cx="60" cy="99" r="2.5" fill="var(--color-gold)" />
+      {/* Big round glasses, filled lenses with a small punched-out shine */}
+      <circle cx="43" cy="59" r="14" fill="var(--color-ink)" />
+      <circle cx="77" cy="59" r="14" fill="var(--color-ink)" />
+      <circle cx="43" cy="59" r="14" fill="none" stroke="var(--color-ink)" strokeWidth="3.5" />
+      <circle cx="77" cy="59" r="14" fill="none" stroke="var(--color-ink)" strokeWidth="3.5" />
+      <circle cx="38" cy="54" r="2.6" fill="var(--color-cream)" />
+      <circle cx="72" cy="54" r="2.6" fill="var(--color-cream)" />
+      <path
+        d="M57 59h6M25 55l-8-3M95 55l8-3"
+        fill="none"
+        stroke="var(--color-ink)"
+        strokeWidth="3.5"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }

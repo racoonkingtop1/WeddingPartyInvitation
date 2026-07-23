@@ -40,14 +40,44 @@ Gradients must blend within or across these families (e.g. `sky → sky-light`,
 `gold → blush`) — never introduce a hue outside this set, and never a stock
 Tailwind gradient color (no `from-purple-500`, etc).
 
+Two one-off blended tints (not tokenized, used only as gradient midpoints to
+chain sections seamlessly — see "Layout rhythm" below): `#EAF4FA` (sky-light
+blended toward cream) and `#F7EFDA` (gold-light blended toward cream). If a
+third blend is ever needed, mix within the same family rather than picking
+an arbitrary hex.
+
 ## Typography
 
-- **Fraunces** (`font-serif`) — titles, names, editorial moments
-- **Manrope** (`font-sans`) — body copy
+- **Cormorant Garamond** (`font-serif`) — titles, names, role values,
+  editorial moments. Optically light — lean on `font-bold`/`font-semibold`
+  for headings so it reads festive rather than thin.
+- **Onest** (`font-sans`) — body copy, a warmer/rounder grotesk than the
+  project's original Manrope
 - **Space Mono** (`font-mono`) — ticket-code meta: times, labels, addresses,
-  role tags (small, uppercase, tracked wide)
-- **Caveat** (`font-script`) — one handwritten line max per page, never
-  structural text
+  role tags (small, uppercase, tracked wide). Kept deliberately unchanged —
+  it has no Cyrillic glyphs and silently falls back to the system monospace
+  for Russian labels, which is fine, expected, and not to be "fixed".
+- **Marck Script** (`font-script`) — one handwritten line max per page
+  (the personal greeting in the role block), never structural text
+
+## Liquid glass (used sparingly)
+
+Two utilities in `src/index.css` — `.glass-panel` (frosted white, for
+floating cards over light content) and `.glass-dark` (frosted white-on-dark,
+for translucent surfaces over `navy`/`ink` backgrounds), plus `.glass-chip`
+for small pill buttons. Reserved for moments that are genuinely "floating"
+above the page: the family popup panel, the QR placeholder box, the "who's
+my family" trigger chip. Never used as a full section background — the rest
+of the page stays flat/gradient paper surfaces per the ticket aesthetic.
+
+## Fixed background texture
+
+The outer fixed decoration layer (`App.tsx`) carries a `.bg-grain` utility —
+a low-opacity (`opacity-[0.05]`), tiled SVG `feTurbulence` noise texture,
+`mix-blend-multiply` over the cream fill. Deliberately *not* a dot/line grid
+(that reads as an AI-generic pattern) — noise reads as paper grain, in
+keeping with the "printed ticket" concept, and stays fixed while the shell
+scrolls over it.
 
 ## Layout rhythm — the "phone shell"
 
@@ -72,11 +102,18 @@ screen**, not a normal full-width responsive page. `App.tsx` renders:
 
 Within the shell:
 
-- Sections are cream/sky-light alternating bands (flat or gently
-  gradient-tinted, e.g. `bg-gradient-to-b from-[var(--color-sky-light)] to-cream`),
-  each with `py-14` vertical padding and `px-6` horizontal padding directly
-  on the `<section>` — no extra inner `max-w` wrapper, the shell already
-  constrains width.
+- Sections form **one continuous, chained gradient**, not alternating flat
+  bands: each section's `from-` stop matches the previous section's `to-`
+  stop, so there's never a hard color seam between blocks (Hero ends
+  `sky-light` → Schedule starts `sky-light` → ends `cream` → DressCode
+  starts/ends `cream` with a soft gold swell → RoleBlock starts `cream` →
+  Location starts where RoleBlock ended → ends `cream` → QR fades from
+  `cream` into `navy`/`#142434`, which the footer then matches exactly).
+  When changing a section's background, always re-check the neighbor's
+  matching edge stop.
+- Each section has `py-14` vertical padding and `px-6` horizontal padding
+  directly on the `<section>` — no extra inner `max-w` wrapper, the shell
+  already constrains width.
 - Cards use `rounded-[28px]` with a visible `ticket-notch` + `perforation`
   utility (see `src/index.css`) when they represent an actual "ticket"
   surface (hero, role block). Informational cards (schedule rows, location)
@@ -87,14 +124,21 @@ Within the shell:
 ## Component patterns
 
 - **Welcome hero (ticket card)** — the hero is purely decorative/informational,
-  no form inputs. It auto-fills from the invite link: `?name=` for the guest
-  name (falls back to "Дорогой гость") and `?role=` for the role title,
-  stacked as two labeled fields on the left. The right side holds a fixed
-  illustration (the glasses-wearing dog, `DogIllustration.tsx`) with the
-  short date (`EVENT_DATE_SHORT`, `20.08.2026`) beneath it. Cream surface,
-  `ticket-notch` side cutouts, dashed `perforation` divider separating a
-  "stub" section from the main body, mono micro-labels in the corners
-  (e.g. `№ 001`, pass type).
+  no form inputs. It auto-fills from the invite link: either `?guest=<id>`
+  (looked up in `src/guests.ts`, fills name + role together) or the manual
+  `?name=`/`?role=` pair, stacked as two labeled fields on the left. The
+  right side holds a fixed illustration (the glasses-wearing dog,
+  `DogIllustration.tsx` — strictly two-tone: `gold` fur + `ink` linework,
+  bold sticker-style, no third fill color) sitting on a `cream` tile that
+  matches the card surface, with the short date (`EVENT_DATE_SHORT`,
+  `20.08.2026`) beneath it. Cream surface, `ticket-notch` side cutouts,
+  dashed `perforation` divider separating a "stub" section from the main
+  body, mono micro-labels in the corners (e.g. `№ 001`, pass type).
+- **Family popup** — if the resolved `?guest=` belongs to a group in
+  `FAMILIES` (`src/guests.ts`), a small `glass-chip` button appears below
+  the ticket ("Кто моя семья?"). It opens `FamilyPopup.tsx`, a `.glass-panel`
+  modal listing every member's name + role title, marking the current guest
+  as "(это ты)". Dismiss via backdrop click, the close button, or Escape.
 - **Section header** — small mono uppercase eyebrow label in `sky-dark`,
   followed by a `font-serif` title in `ink`.
 - **Badge/pill** — `rounded-full`, mono uppercase text, colored by context
@@ -110,4 +154,7 @@ No default Tailwind gradient combos (gradients must use the palette tokens
 above), no bouncy easing, no more than 3 font families visible in one view,
 no low-contrast text-on-accent, no dead-looking interactive elements without
 a hover/focus state, no `md:`/`lg:` layout variants inside a section (the
-phone shell caps width at `sm`), no re-introducing form inputs into the hero.
+phone shell caps width at `sm`), no re-introducing form inputs into the hero,
+no hard flat-color seams between adjacent sections (chain the gradient
+stops instead), no glass surface as a full section background (glass is a
+floating-element accent only), no dot/line grid textures (noise/grain only).

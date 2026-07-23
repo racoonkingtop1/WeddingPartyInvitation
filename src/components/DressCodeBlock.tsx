@@ -4,7 +4,7 @@ import SectionHeader from './SectionHeader';
 
 export default function DressCodeBlock() {
   return (
-    <section className="py-14 px-6 bg-[var(--color-cream)]">
+    <section className="py-14 px-6 bg-gradient-to-b from-[var(--color-cream)] via-[#F7EFDA] to-[var(--color-cream)]">
       <ScrollReveal>
         <SectionHeader eyebrow="Как одеться" title="Дресс-код" />
         <div className="rounded-[28px] border border-[var(--color-sky-dark)]/15 bg-gradient-to-br from-[var(--color-sky-light)] to-[var(--color-gold-light)]/40 px-6 py-8 text-center">

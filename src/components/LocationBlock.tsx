@@ -9,7 +9,7 @@ const YANDEX_MAPS_URL = `https://yandex.ru/maps/?text=${encodeURIComponent(EVENT
 
 export default function LocationBlock() {
   return (
-    <section className="py-14 px-6 bg-[var(--color-cream)]">
+    <section className="py-14 px-6 bg-gradient-to-b from-[#EAF4FA] to-[var(--color-cream)]">
       <ScrollReveal>
         <SectionHeader eyebrow="Куда приехать" title="Место проведения" />
 
@@ -44,7 +44,7 @@ export default function LocationBlock() {
             href={YANDEX_MAPS_URL}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-full border-[1.5px] border-[var(--color-ink)]/80 px-5 py-2.5 font-mono text-xs uppercase tracking-wider text-[var(--color-ink)] hover:bg-[var(--color-sky-light)] transition-colors"
+            className="inline-flex items-center gap-2 rounded-full border-[1.5px] border-[var(--color-ink)]/80 px-6 py-3 font-mono text-xs uppercase tracking-wider text-[var(--color-ink)] hover:bg-[var(--color-sky-light)] transition-colors"
           >
             <Navigation size={14} /> Яндекс Карты
           </a>
@@ -52,7 +52,7 @@ export default function LocationBlock() {
             href={GOOGLE_MAPS_URL}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-[var(--color-sky)] px-5 py-2.5 font-mono text-xs uppercase tracking-wider text-[var(--color-ink)] hover:bg-[var(--color-sky-dark)] hover:text-white transition-colors"
+            className="inline-flex items-center gap-2 rounded-full bg-[var(--color-sky)] px-6 py-3 font-mono text-xs uppercase tracking-wider text-[var(--color-ink)] hover:bg-[var(--color-sky-dark)] hover:text-white transition-colors"
           >
             <Navigation size={14} /> Google Maps
           </a>

@@ -5,7 +5,7 @@ import SectionHeader from './SectionHeader';
 
 export default function ScheduleBlock() {
   return (
-    <section className="py-14 px-6 bg-gradient-to-b from-[#EAF4FA] to-[var(--color-sky-light)]">
+    <section className="py-14 px-6 bg-gradient-to-b from-[var(--color-sky-light)] via-[#EAF4FA] to-[var(--color-cream)]">
       <ScrollReveal>
         <SectionHeader eyebrow="Программа дня" title="Расписание" subtitle="Чтобы ничего не пропустить" />
       </ScrollReveal>

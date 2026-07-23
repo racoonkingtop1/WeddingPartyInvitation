@@ -9,7 +9,8 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[var(--color-cream)] font-sans antialiased relative overflow-x-hidden">
       {/* Page-level decoration — only visible in the margins around the shell on wider screens */}
-      <div aria-hidden="true" className="pointer-events-none fixed inset-0 overflow-hidden">
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 overflow-hidden bg-[var(--color-cream)]">
+        <div className="absolute inset-0 bg-grain opacity-[0.05] mix-blend-multiply" />
         <div
           className="absolute -top-28 -left-24 w-80 h-80 rounded-full opacity-40 blur-3xl"
           style={{ background: 'radial-gradient(circle, var(--color-sky) 0%, transparent 70%)' }}
@@ -34,7 +35,7 @@ export default function App() {
           <RoleBlock />
           <LocationBlock />
           <QRBlock />
-          <footer className="py-8 text-center font-mono text-[10px] uppercase tracking-[0.2em] bg-[var(--color-navy)]">
+          <footer className="py-8 text-center font-mono text-[10px] uppercase tracking-[0.2em] bg-[#142434]">
             <span className="text-white/40">Валерия &amp; Павел · Свадебные посиделки · 2026</span>
           </footer>
         </div>

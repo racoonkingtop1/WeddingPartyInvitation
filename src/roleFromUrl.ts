@@ -20,6 +20,16 @@ const ALIASES: Record<string, RoleKey> = {
   bridesmaid: 'bridesmaid',
   groomsman: 'groomsman',
   bestman: 'groomsman',
+  'groom-father': 'groom-father',
+  'groom-mother': 'groom-mother',
+  'bride-mother': 'bride-mother',
+  'family-friend': 'family-friend',
+  'style-icon': 'style-icon',
+  'hype-creator': 'hype-creator',
+  'friend-of-nazar': 'friend-of-nazar',
+  'friend-of-kirill': 'friend-of-kirill',
+  'financial-director': 'financial-director',
+  'sports-star': 'sports-star',
 };
 
 export function resolveRoleFromSearch(search: string): RoleKey {

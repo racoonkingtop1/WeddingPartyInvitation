@@ -13,7 +13,17 @@ export type RoleKey =
   | 'coordinator'
   | 'speaker'
   | 'bridesmaid'
-  | 'groomsman';
+  | 'groomsman'
+  | 'groom-father'
+  | 'groom-mother'
+  | 'bride-mother'
+  | 'family-friend'
+  | 'style-icon'
+  | 'hype-creator'
+  | 'friend-of-nazar'
+  | 'friend-of-kirill'
+  | 'financial-director'
+  | 'sports-star';
 
 export type RoleAccent = 'sky' | 'gold' | 'navy' | 'ink';
 
