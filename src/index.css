@@ -14,7 +14,13 @@
   --color-ink: #171A1C;
   --color-cream: #FBF6EC;
   --color-gold: #C9A15D;
+  --color-gold-light: #F1E4C6;
   --color-navy: #1F3A52;
+  --color-blush: #F0C6BA;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 @layer utilities {

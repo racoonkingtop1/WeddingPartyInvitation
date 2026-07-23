@@ -3,6 +3,7 @@ import { ScheduleItem, RoleDef, RoleKey } from './types';
 export const BRIDE_NAME = 'Валерия';
 export const GROOM_NAME = 'Павел';
 export const EVENT_DATE_LABEL = '20 августа 2026';
+export const EVENT_DATE_SHORT = '20.08.2026';
 export const EVENT_ADDRESS = 'г. Верхняя Пышма, СНТ «Ясная Поляна №94», дом 194';
 export const EVENT_ADDRESS_QUERY = 'Свердловская область, Верхняя Пышма, СНТ Ясная Поляна №94, дом 194';
 export const EVENT_CHAT_URL = 'https://t.me/'; // TODO: заменить на реальную ссылку на чат мероприятия
@@ -32,6 +33,8 @@ export const SCHEDULE: ScheduleItem[] = [
 
 // Единственный источник правды по ролям. RoleBlock читает ?role= из URL
 // и берёт отсюда нужное описание; неизвестное/пустое значение = 'guest'.
+// Любой blurb может содержать токен {name} — RoleBlock подставит туда имя
+// гостя из ?name= (или «дорогой гость», если параметра нет в ссылке).
 export const ROLES: Record<RoleKey, RoleDef> = {
   guest: {
     key: 'guest',

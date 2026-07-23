@@ -1,14 +1,14 @@
 export default function SectionHeader({ eyebrow, title, subtitle }: { eyebrow: string; title: string; subtitle?: string }) {
   return (
-    <div className="text-center mb-10">
+    <div className="text-center mb-8">
       <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-[var(--color-sky-dark)]">
         {eyebrow}
       </span>
-      <h2 className="font-serif text-3xl md:text-4xl font-semibold text-[var(--color-ink)] mt-2">
+      <h2 className="font-serif text-3xl font-semibold text-[var(--color-ink)] mt-2">
         {title}
       </h2>
       {subtitle && (
-        <p className="text-[var(--color-navy)]/70 mt-2 text-sm md:text-base">{subtitle}</p>
+        <p className="text-[var(--color-navy)]/70 mt-2 text-sm">{subtitle}</p>
       )}
     </div>
   );
