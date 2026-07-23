@@ -1,8 +1,12 @@
 # DESIGN.md — Wedding Party Invitation
 
 Single source of truth for this project's visual language. Read this before
-adding or changing any UI. Style direction: **"elegant event ticket"** — a
-wedding invite crossed with a printed event pass.
+adding or changing any UI. Style direction: **"liquid glass, midnight"** — a
+dark, frosted-glass event ticket floating over softly glowing blue/black
+blobs. Replaces the earlier "elegant event ticket" cream/gold paper look —
+that identity was fully replaced, not blended; the ticket *structure*
+(notch cutouts, perforation, stub, mono micro-labels) survives, its surface
+does not.
 
 ## About the reference skills
 
@@ -14,147 +18,133 @@ third-party code from npm/an external app, which falls outside what this
 assistant executes unattended. Instead, the *methodology* each one documents
 publicly (DESIGN.md-driven design systems, a curated palette/pattern/type
 catalog, an audit/critique checklist, an optional terse chat mode) was
-distilled into local, inert skill files under `.claude/skills/`:
-
-- `caveman-mode` — optional terse chat style (opt-in only)
-- `design-system-spec` — read/update discipline for this file
-- `design-system-generator` — the locked palette/type/pattern choices below
-- `design-critique` — a manual audit checklist to run after building a block
+distilled into local, inert skill files under `.claude/skills/`.
 
 ## Palette
 
+Cool-neutral ground plus one accent hue family (blue) — no warm accent
+survives this redesign; even the former "special role" gold highlight is
+now a lighter blue tone, differentiated by glow rather than hue.
+
 | Token | Hex | Use |
 |---|---|---|
-| `sky` | `#6FB4DE` | Primary accent — buttons, active states, role=guest tag |
-| `sky-light` | `#DCEEF7` | Section tints, card backgrounds |
-| `sky-dark` | `#3E7FA6` | Sky-on-sky text, borders |
-| `ink` | `#171A1C` | Primary text, ticket-stub black |
-| `cream` | `#FBF6EC` | Page/paper background |
-| `gold` | `#C9A15D` | "Special role" accent, highlights |
-| `gold-light` | `#F1E4C6` | Gold gradient stop, warm section tints |
-| `navy` | `#1F3A52` | Secondary text, deep contrast fills |
-| `blush` | `#F0C6BA` | Warm decorative accent — glow blobs, cheek/gradient stops, never body text |
+| `void` | `#05070C` | Page background, outside the phone shell |
+| `abyss` | `#0A0F1A` | Ticket-notch punch-out fill, small tile fills (dog mascot tile) |
+| `abyss-2` | `#101A2C` | Secondary solid-ish card fill (one RoleBlock accent variant) |
+| `blue` | `#3E7BFA` | Primary accent — buttons, badges, blob glow |
+| `blue-light` | `#8FB8FF` | Labels, eyebrow text, hover states, the lighter of the two RoleBlock "blue" accents |
+| `blue-deep` | `#14245C` | Deep blob gradient stop, adds depth without leaving the blue family |
+| `ice` | `#EAF1FF` | Primary text on dark |
+| `mist` | `#93A3C2` | Secondary/muted text on dark |
 
-Three hue families total: cool (sky), warm (gold/blush), neutral (ink/cream/navy).
-Gradients must blend within or across these families (e.g. `sky → sky-light`,
-`gold → blush`) — never introduce a hue outside this set, and never a stock
-Tailwind gradient color (no `from-purple-500`, etc).
-
-Two one-off blended tints (not tokenized, used only as gradient midpoints to
-chain sections seamlessly — see "Layout rhythm" below): `#EAF4FA` (sky-light
-blended toward cream) and `#F7EFDA` (gold-light blended toward cream). If a
-third blend is ever needed, mix within the same family rather than picking
-an arbitrary hex.
+Never introduce a hue outside blue/black/neutral (no gold, blush, or any
+warm accent) — the brief pins this palette specifically, and it happens to
+match the couple's own real dress code (black or blue).
 
 ## Typography
 
+Unchanged from the previous system — the font swap was already settled and
+survives this visual-world replacement:
+
 - **Cormorant Garamond** (`font-serif`) — titles, names, role values,
-  editorial moments. Optically light — lean on `font-bold`/`font-semibold`
-  for headings so it reads festive rather than thin.
-- **Onest** (`font-sans`) — body copy, a warmer/rounder grotesk than the
-  project's original Manrope
+  editorial moments.
+- **Onest** (`font-sans`) — body copy.
 - **Space Mono** (`font-mono`) — ticket-code meta: times, labels, addresses,
-  role tags (small, uppercase, tracked wide). Kept deliberately unchanged —
-  it has no Cyrillic glyphs and silently falls back to the system monospace
-  for Russian labels, which is fine, expected, and not to be "fixed".
-- **Marck Script** (`font-script`) — one handwritten line max per page
-  (the personal greeting in the role block), never structural text
+  role tags. No Cyrillic glyphs; falls back to the system monospace for
+  Russian labels, which is expected and not to be "fixed".
+- **Marck Script** (`font-script`) — one handwritten line max per page.
 
-## Liquid glass (used sparingly)
+## Liquid glass
 
-Two utilities in `src/index.css` — `.glass-panel` (frosted white, for
-floating cards over light content) and `.glass-dark` (frosted white-on-dark,
-for translucent surfaces over `navy`/`ink` backgrounds), plus `.glass-chip`
-for small pill buttons. Reserved for moments that are genuinely "floating"
-above the page: the family popup panel, the QR placeholder box, the "who's
-my family" trigger chip. Never used as a full section background — the rest
-of the page stays flat/gradient paper surfaces per the ticket aesthetic.
+Glass is now the base material of the whole surface, not a sparing accent —
+that is the point of this redesign. Four utilities in `src/index.css`:
+
+- `.glass-panel` — translucent dark fill (`rgba(16,24,40,0.55)`) +
+  `blur(24px) saturate(160%)` + a 1px blue-tinted border. The default
+  surface for every content card (ticket body, schedule rows, dress-code
+  card, role card, timeline).
+- `.glass-panel-strong` — less transparent (`rgba(8,13,24,0.86)`), used
+  where a lot of body copy needs to stay legible over the moving blob
+  background: the outer phone shell (`App.tsx`) and the family popup.
+- `.glass-chip` — small pills/badges (the "Кто моя семья?" trigger, the
+  Yandex Maps link).
+- `.glow-blue` — soft blue box-shadow, used sparingly as a "this one is
+  special" signal (e.g. the `gold`-keyed RoleBlock accent).
 
 ## Fixed background texture
 
-The outer fixed decoration layer (`App.tsx`) carries a `.bg-grain` utility —
-a low-opacity (`opacity-[0.05]`), tiled SVG `feTurbulence` noise texture,
-`mix-blend-multiply` over the cream fill. Deliberately *not* a dot/line grid
-(that reads as an AI-generic pattern) — noise reads as paper grain, in
-keeping with the "printed ticket" concept, and stays fixed while the shell
-scrolls over it.
+The outer fixed decoration layer (`App.tsx`) carries three large
+(`blur-3xl`) radial blobs — `blue`, `blue-deep`, `blue-light` — over a flat
+`void` fill, plus `.bg-grain`, a low-opacity (`opacity-[0.05]`) tiled SVG
+`feTurbulence` noise texture blended with `mix-blend-overlay` (not
+`multiply` — multiply would crush a light-colored grain to black against
+this dark base; overlay lets it read faintly inside the lighter blob glow
+regions and stay invisible over flat void). Deliberately *not* a dot/line
+grid. This fixed backdrop is also what removes hard section-to-section
+seams: sections no longer carry their own flat/gradient background color —
+they are transparent, so every card just floats as glass over one
+continuous backdrop.
 
 ## Layout rhythm — the "phone shell"
 
-The whole page lives inside **one container shaped like a large phone
-screen**, not a normal full-width responsive page. `App.tsx` renders:
+Unchanged structurally from the previous system:
 
-- an outer `<div>` covering the viewport, with soft blurred gradient blobs
-  (`sky`/`blush`/`gold`, low opacity, `blur-3xl`) as the only page-level
+- an outer `<div>` covering the viewport, `bg-[var(--color-void)]`, with
+  the grain layer and three blurred blob decorations as the only page-level
   decoration;
-- a single content shell, `w-full max-w-[480px] mx-auto`, holding every
-  section in document order. Below the `sm` breakpoint it has **no**
-  rounding/border/shadow and **no** horizontal page padding, so it fills the
-  device viewport edge-to-edge — on a real phone the shell *is* the screen.
-  At `sm:` and up it gets `rounded-[36px]`, a soft shadow, and outer page
-  margin, so it reads as a floating phone-shaped card centered on a wider
-  viewport.
-- Because the shell's width is capped at 480px regardless of viewport, do
-  **not** reach for `md:`/`lg:` variants inside individual sections for
-  spacing or type scale — the visual width never grows past `sm`. Pick one
-  mobile-scale size and keep it. `sm:` is reserved for the outer shell
-  chrome only.
-
-Within the shell:
-
-- Sections form **one continuous, chained gradient**, not alternating flat
-  bands: each section's `from-` stop matches the previous section's `to-`
-  stop, so there's never a hard color seam between blocks (Hero ends
-  `sky-light` → Schedule starts `sky-light` → ends `cream` → DressCode
-  starts/ends `cream` with a soft gold swell → RoleBlock starts `cream` →
-  Location starts where RoleBlock ended → ends `cream` → QR fades from
-  `cream` into `navy`/`#142434`, which the footer then matches exactly).
-  When changing a section's background, always re-check the neighbor's
-  matching edge stop.
-- Each section has `py-14` vertical padding and `px-6` horizontal padding
-  directly on the `<section>` — no extra inner `max-w` wrapper, the shell
-  already constrains width.
-- Cards use `rounded-[28px]` with a visible `ticket-notch` + `perforation`
-  utility (see `src/index.css`) when they represent an actual "ticket"
-  surface (hero, role block). Informational cards (schedule rows, location)
-  use a plainer `rounded-2xl` with a 1px `sky-dark/15` border.
-- Entrance motion: reuse the existing `ScrollReveal` fade+slide pattern from
-  the sibling `wedding` project — no bounce/elastic easing anywhere.
+- a single content shell, `w-full max-w-[480px] mx-auto`, now itself
+  `.glass-panel-strong` rather than a flat cream paper fill — the shell is
+  one large glass pane floating over the fixed blob background, holding
+  every section in document order. Below `sm` it has no rounding, so it
+  fills the device viewport edge-to-edge; at `sm:` and up it gets
+  `rounded-[36px]` and outer page margin.
+- Sections no longer own a background at all (no more chained gradients —
+  that whole problem disappears once nothing is flat-filled). Each section
+  keeps its `py-14 px-6` padding directly on the `<section>`.
+- Cards use `rounded-[28px]` with `ticket-notch` + `perforation` (now
+  recolored: the notch punch-out fill is `abyss`, the perforation dashes are
+  `blue-light/20`) on ticket-surface cards (hero), a plainer `rounded-2xl`
+  `.glass-panel` for informational cards (schedule rows, location, dress
+  code, role).
+- Entrance motion: unchanged `ScrollReveal` fade+slide pattern, no
+  bounce/elastic easing anywhere.
 
 ## Component patterns
 
-- **Welcome hero (ticket card)** — the hero is purely decorative/informational,
-  no form inputs. It auto-fills from the invite link: either `?guest=<id>`
-  (looked up in `src/guests.ts`, fills name + role together) or the manual
-  `?name=`/`?role=` pair, stacked as two labeled fields on the left. The
-  right side holds a fixed illustration (the glasses-wearing dog,
-  `DogIllustration.tsx` — strictly two-tone: `gold` fur + `ink` linework,
-  bold sticker-style, no third fill color) sitting on a `cream` tile that
-  matches the card surface, with the short date (`EVENT_DATE_SHORT`,
-  `20.08.2026`) beneath it. Cream surface, `ticket-notch` side cutouts,
-  dashed `perforation` divider separating a "stub" section from the main
-  body, mono micro-labels in the corners (e.g. `№ 001`, pass type).
-- **Family popup** — if the resolved `?guest=` belongs to a group in
-  `FAMILIES` (`src/guests.ts`), a small `glass-chip` button appears below
-  the ticket ("Кто моя семья?"). It opens `FamilyPopup.tsx`, a `.glass-panel`
-  modal listing every member's name + role title, marking the current guest
-  as "(это ты)". Dismiss via backdrop click, the close button, or Escape.
-- **Section header** — small mono uppercase eyebrow label in `sky-dark`,
-  followed by a `font-serif` title in `ink`.
-- **Badge/pill** — `rounded-full`, mono uppercase text, colored by context
-  (`sky` for neutral/guest, `gold` for any special role).
-- **Button (primary)** — solid `sky` fill, `ink` text, `rounded-full`,
-  hover darkens to `sky-dark` with white text.
-- **Button (secondary/outline)** — 1.5px `ink` or `navy` border, transparent
-  fill, hover fills `sky-light`.
+- **Welcome hero (ticket card)** — unchanged behavior: auto-fills from
+  `?guest=<id>` or the manual `?name=`/`?role=` pair. Now a `.glass-panel`
+  surface instead of flat cream paper. The mascot (`DogIllustration.tsx`)
+  is strictly two-tone: `blue` fur + `void` linework — the redesign's own
+  accent pair, replacing the old gold/ink pairing — sitting on an `abyss`
+  tile that matches the new dark card surface, with its glasses' "shine"
+  punch-out recolored from `cream` to `abyss` to keep matching that tile.
+- **Family popup** — unchanged behavior, now `.glass-panel-strong` over a
+  `void/70` backdrop instead of a light frosted panel over an `ink/45`
+  backdrop.
+- **RoleBlock accents** — the four accent keys in `data.ts` (`sky`, `gold`,
+  `navy`, `ink`) are unchanged (they're just categorization strings), but
+  `ACCENT_STYLES` in `RoleBlock.tsx` now maps all four into the blue/black
+  pair only: `sky`/`gold` render as two blue treatments (plain glass vs.
+  glass + `.glow-blue` for a "this one's special" read), `navy`/`ink`
+  render as two black-family solid-ish cards (`abyss-2` vs `void`). The
+  former per-accent light/dark text branching is gone — every card is dark
+  now, so text is always `ice`/`mist`.
+- **Section header** — small mono uppercase eyebrow label in `blue-light`,
+  followed by a `font-serif` title in `ice`.
+- **Badge/pill** — `rounded-full`, mono uppercase text, `blue` fill with
+  `void` text (was `sky` fill with `ink` text).
+- **Button (primary)** — solid `blue` fill, `void` text, `rounded-full`,
+  hover lightens to `blue-light`.
+- **Button (secondary/outline)** — `.glass-chip`, hover fills `blue/15`.
 
 ## Anti-patterns (checked during `design-critique`)
 
-No default Tailwind gradient combos (gradients must use the palette tokens
-above), no bouncy easing, no more than 3 font families visible in one view,
-no low-contrast text-on-accent, no dead-looking interactive elements without
-a hover/focus state, no `md:`/`lg:` layout variants inside a section (the
-phone shell caps width at `sm`), no re-introducing form inputs into the hero,
-no hard flat-color seams between adjacent sections (chain the gradient
-stops instead), no glass surface as a full section background (glass is a
-floating-element accent only), no dot/line grid textures (noise/grain only).
+No hue outside blue/black/neutral (no gold, blush, or other warm accent).
+No flat opaque section backgrounds — every section is transparent, letting
+the fixed blob backdrop and nested glass panels carry the surface. No
+dot/line grid textures (noise/grain only, blended with `overlay` not
+`multiply` on a dark base). No bouncy easing. No more than 3 font families
+visible in one view. No low-contrast text-on-accent. No re-introducing form
+inputs into the hero. No `md:`/`lg:` layout variants inside a section (the
+phone shell caps width at `sm`). Text on glass must be `ice` (primary) or
+`mist` (secondary) only, never a color tuned for the old light-card system.

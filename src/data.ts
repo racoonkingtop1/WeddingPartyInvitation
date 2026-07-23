@@ -6,7 +6,11 @@ export const EVENT_DATE_LABEL = '20 августа 2026';
 export const EVENT_DATE_SHORT = '20.08.2026';
 export const EVENT_ADDRESS = 'г. Верхняя Пышма, СНТ «Ясная Поляна №94», дом 194';
 export const EVENT_ADDRESS_QUERY = 'Свердловская область, Верхняя Пышма, СНТ Ясная Поляна №94, дом 194';
-export const EVENT_CHAT_URL = 'https://t.me/'; // TODO: заменить на реальную ссылку на чат мероприятия
+export const EVENT_CHAT_URL = 'https://t.me/+I4QiCuNf2gYxYmQy';
+
+export const SONG_ARTIST = 'Metronomy';
+export const SONG_TITLE = 'The Look';
+export const YANDEX_DISK_PUBLIC_KEY = 'https://disk.yandex.ru/d/MqIUAitphA3ixQ';
 
 // Программа дня — можно свободно добавлять/убирать/переставлять пункты,
 // компонент ScheduleBlock просто рендерит этот массив по порядку.

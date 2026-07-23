@@ -45,34 +45,27 @@ const ICONS: Record<string, LucideIcon> = {
   Trophy,
 };
 
-const ACCENT_STYLES: Record<string, { card: string; badge: string; iconWrap: string; text: string }> = {
+// Four accent keys carried over from data.ts, recolored to the blue/black
+// pair only — 'sky' and 'gold' both read as "blue" (light glass vs. a
+// glowing highlight), 'navy' and 'ink' both read as "black" (two depths).
+const ACCENT_STYLES: Record<string, { card: string; iconWrap: string }> = {
   sky: {
-    card: 'bg-[var(--color-sky-light)] border-[var(--color-sky-dark)]/20',
-    badge: 'bg-[var(--color-sky)] text-[var(--color-ink)]',
-    iconWrap: 'bg-[var(--color-sky)] text-[var(--color-ink)]',
-    text: 'text-[var(--color-sky-dark)]',
+    card: 'glass-panel border-[var(--color-blue-light)]/15',
+    iconWrap: 'bg-[var(--color-blue)] text-[var(--color-void)]',
   },
   gold: {
-    card: 'bg-[#FBF1DE] border-[var(--color-gold)]/30',
-    badge: 'bg-[var(--color-gold)] text-[var(--color-ink)]',
-    iconWrap: 'bg-[var(--color-gold)] text-[var(--color-ink)]',
-    text: 'text-[var(--color-gold)]',
+    card: 'glass-panel border-[var(--color-blue-light)]/30 glow-blue',
+    iconWrap: 'bg-[var(--color-blue-light)] text-[var(--color-void)]',
   },
   navy: {
-    card: 'bg-[var(--color-navy)] border-[var(--color-navy)]',
-    badge: 'bg-[var(--color-sky)] text-[var(--color-ink)]',
-    iconWrap: 'bg-white/10 text-white',
-    text: 'text-[var(--color-sky)]',
+    card: 'bg-[var(--color-abyss-2)] border border-white/10',
+    iconWrap: 'bg-white/10 text-[var(--color-ice)]',
   },
   ink: {
-    card: 'bg-[var(--color-ink)] border-[var(--color-ink)]',
-    badge: 'bg-[var(--color-gold)] text-[var(--color-ink)]',
-    iconWrap: 'bg-white/10 text-white',
-    text: 'text-[var(--color-gold)]',
+    card: 'bg-[var(--color-void)] border border-white/10',
+    iconWrap: 'bg-white/10 text-[var(--color-ice)]',
   },
 };
-
-const DARK_ACCENTS = new Set(['navy', 'ink']);
 
 export default function RoleBlock() {
   const [guest] = useState(() => resolveGuestFromSearch(window.location.search));
@@ -82,41 +75,38 @@ export default function RoleBlock() {
   const role = ROLES[roleKey];
   const Icon = ICONS[role.icon] ?? Ticket;
   const styles = ACCENT_STYLES[role.accent];
-  const isDark = DARK_ACCENTS.has(role.accent);
 
+  // A guest's personal title/blurb (set in guests.ts) overrides the shared
+  // ROLES[role] text; only accent/icon still come from the role itself.
+  const displayTitle = guest?.title ?? role.title;
+  const rawBlurb = guest?.blurb ?? role.blurb;
   // Blurbs may embed a {name} token to be filled in later — see data.ts.
-  const blurb = role.blurb.includes('{name}')
-    ? role.blurb.replaceAll('{name}', name ?? 'дорогой гость')
-    : role.blurb;
+  const blurb = rawBlurb.includes('{name}')
+    ? rawBlurb.replaceAll('{name}', name ?? 'дорогой гость')
+    : rawBlurb;
 
   return (
-    <section className="py-14 px-6 bg-gradient-to-b from-[var(--color-cream)] via-[var(--color-sky-light)] to-[#EAF4FA]">
+    <section className="py-9 px-6">
       <ScrollReveal>
         {name && (
-          <p className="text-center font-script text-3xl text-[var(--color-gold)] mb-2">
+          <p className="text-center font-script text-3xl text-[var(--color-blue-light)] mb-2">
             Привет, {name}!
           </p>
         )}
-        <SectionHeader eyebrow="Кто ты сегодня" title="Твоя роль" />
+        <SectionHeader eyebrow="узнай какова" title="Твоя роль" />
         <div
           key={roleKey}
-          className={`rounded-[28px] border px-6 py-8 text-center transition-colors duration-500 ${styles.card}`}
+          className={`rounded-[28px] px-6 py-8 text-center transition-colors duration-500 ${styles.card}`}
         >
           <div className={`w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-5 ${styles.iconWrap}`}>
             <Icon size={26} strokeWidth={1.75} />
           </div>
 
-          <span
-            className={`inline-block font-mono text-[10px] uppercase tracking-[0.2em] px-3 py-1 rounded-full ${styles.badge}`}
-          >
-            {role.isSpecial ? 'Особая роль' : 'Роль'}
-          </span>
-
-          <h3 className={`font-serif text-2xl font-bold mt-4 ${isDark ? 'text-white' : 'text-[var(--color-ink)]'}`}>
-            {role.title}
+          <h3 className="font-serif text-2xl font-bold text-[var(--color-ice)]">
+            {displayTitle}
           </h3>
 
-          <p className={`mt-3 leading-relaxed text-sm ${isDark ? 'text-white/80' : 'text-[var(--color-navy)]/80'}`}>
+          <p className="mt-3 leading-relaxed text-sm text-[var(--color-mist)]">
             {blurb}
           </p>
         </div>
