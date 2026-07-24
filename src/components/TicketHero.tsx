@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Users } from 'lucide-react';
+import { Users, CircleHelp } from 'lucide-react';
 import { BRIDE_NAME, GROOM_NAME, EVENT_DATE_LABEL, EVENT_DATE_SHORT, ROLES } from '../data';
 import { RoleKey } from '../types';
 import { resolveRoleFromSearch } from '../roleFromUrl';
@@ -45,15 +45,25 @@ export default function TicketHero() {
               <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-[var(--color-blue-light)]">
                 Кому
               </span>
-              <p className="font-serif text-xl font-medium text-[var(--color-ice)] mt-1 truncate">
+              <p className="font-serif italic font-semibold text-xl tracking-wide text-[var(--color-ice)] mt-1 truncate">
                 {guestName ?? 'Дорогой гость'}
               </p>
             </div>
             <div>
-              <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-[var(--color-blue-light)]">
-                Роль
-              </span>
-              <p className="font-serif text-xl font-medium text-[var(--color-ice)] mt-1 truncate">
+              <div className="flex items-center gap-1.5">
+                <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-[var(--color-blue-light)]">
+                  Роль
+                </span>
+                <a
+                  href="#role"
+                  aria-label="Узнать подробнее о роли"
+                  title="Узнать подробнее о роли"
+                  className="glass-chip w-4 h-4 rounded-full flex items-center justify-center text-[var(--color-blue-light)] hover:bg-[var(--color-blue)]/20 hover:text-[var(--color-ice)] transition-colors shrink-0"
+                >
+                  <CircleHelp size={10} strokeWidth={2.25} />
+                </a>
+              </div>
+              <p className="font-serif italic font-semibold text-xl tracking-wide text-[var(--color-ice)] mt-1 truncate">
                 {displayRoleTitle}
               </p>
             </div>

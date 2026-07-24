@@ -86,7 +86,7 @@ export default function RoleBlock() {
     : rawBlurb;
 
   return (
-    <section className="py-9 px-6">
+    <section id="role" className="py-9 px-6 scroll-mt-20">
       <ScrollReveal>
         {name && (
           <p className="text-center font-script text-3xl text-[var(--color-blue-light)] mb-2">

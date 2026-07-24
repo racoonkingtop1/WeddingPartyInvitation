@@ -19,9 +19,10 @@ const YANDEX_DOWNLOAD_API = YANDEX_DISK_PUBLIC_KEY
 
 export default function App() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [isMusicReady, setIsMusicReady] = useState(false);
-  // Set on a fetch/decoding failure so the preloader doesn't wait out the
-  // full timeout when we already know the track isn't coming.
+  // Whether the user has asked to play before the track finished loading —
+  // honored the instant it's ready, so a tap always feels instant instead
+  // of waiting on Yandex Disk.
+  const wantsToPlayRef = useRef(false);
   const [isMusicFailed, setIsMusicFailed] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isFontsReady, setIsFontsReady] = useState(false);
@@ -29,8 +30,9 @@ export default function App() {
   const [showPreloader, setShowPreloader] = useState(true);
 
   // Start fetching the background track the moment the app mounts — before
-  // the page is even shown — so it's already buffered and can start playing
-  // instantly on tap, with no wait on Yandex Disk after the fact.
+  // the page is even shown — but this no longer gates the preloader (see
+  // below): the button is clickable immediately, and playback starts the
+  // moment the track is ready rather than making the whole page wait on it.
   useEffect(() => {
     if (!YANDEX_DOWNLOAD_API) {
       setIsMusicFailed(true);
@@ -39,7 +41,6 @@ export default function App() {
     let cancelled = false;
     let audio: HTMLAudioElement | null = null;
     let objectUrl: string | null = null;
-    const handleReady = () => setIsMusicReady(true);
 
     fetch(YANDEX_DOWNLOAD_API)
       .then((res) => res.json())
@@ -54,15 +55,18 @@ export default function App() {
         audio = new Audio(objectUrl);
         audio.loop = true;
         audio.volume = 0.35;
-        audio.preload = 'auto';
         audioRef.current = audio;
         // Keep the play/pause button in sync with the actual audio element —
         // not just clicks, but also OS/hardware media-key play-pause events,
         // which the browser applies directly to the element.
         audio.addEventListener('play', () => setIsPlaying(true));
         audio.addEventListener('pause', () => setIsPlaying(false));
-        audio.addEventListener('canplaythrough', handleReady, { once: true });
-        audio.load();
+        if (wantsToPlayRef.current) {
+          audio.play().catch((err) => {
+            console.warn('Deferred playback blocked by autoplay policy — needs a fresh tap', err);
+            setIsPlaying(false);
+          });
+        }
       })
       .catch((err) => {
         console.warn('Failed to load background track from Yandex Disk', err);
@@ -71,10 +75,7 @@ export default function App() {
 
     return () => {
       cancelled = true;
-      if (audio) {
-        audio.removeEventListener('canplaythrough', handleReady);
-        audio.pause();
-      }
+      if (audio) audio.pause();
       if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
   }, []);
@@ -87,16 +88,15 @@ export default function App() {
     }
   }, []);
 
-  // Never block the page forever — a slow connection or a Yandex Disk hiccup
-  // shouldn't strand a guest on the loading screen. Generous on purpose: the
-  // whole point of the preloader is to hold the page until the track has
-  // actually finished downloading, so the music button works immediately.
+  // Fonts should resolve almost immediately; this is just a safety net so a
+  // stalled font load can never strand a guest on the loading screen. Music
+  // is intentionally not part of this gate — see the effect above.
   useEffect(() => {
-    const timeout = setTimeout(() => setIsTimedOut(true), 15000);
+    const timeout = setTimeout(() => setIsTimedOut(true), 4000);
     return () => clearTimeout(timeout);
   }, []);
 
-  const isAppReady = ((isMusicReady || isMusicFailed) && isFontsReady) || isTimedOut;
+  const isAppReady = isFontsReady || isTimedOut;
 
   useEffect(() => {
     if (!isAppReady) return;
@@ -105,7 +105,15 @@ export default function App() {
   }, [isAppReady]);
 
   const handleToggleMusic = () => {
-    if (!audioRef.current || !isMusicReady) return;
+    if (isMusicFailed) return;
+    if (!audioRef.current) {
+      // Still loading — remember the request and reflect it optimistically;
+      // the effect above starts playback the instant the track is ready.
+      const next = !wantsToPlayRef.current;
+      wantsToPlayRef.current = next;
+      setIsPlaying(next);
+      return;
+    }
     if (isPlaying) {
       audioRef.current.pause();
     } else {
@@ -141,7 +149,7 @@ export default function App() {
           glass phone-shaped card once there's room to see its edges. */}
       <div className="relative py-0 sm:py-10 px-0 sm:px-4">
         <div className="relative w-full max-w-[480px] mx-auto glass-panel-strong sm:rounded-[36px] shadow-[0_30px_80px_-15px_rgba(4,8,20,0.6)] overflow-hidden">
-          <MusicBar isReady={isMusicReady} isPlaying={isPlaying} onToggle={handleToggleMusic} />
+          <MusicBar hasFailed={isMusicFailed} isPlaying={isPlaying} onToggle={handleToggleMusic} />
           <TicketHero />
           <ScheduleBlock />
           <DressCodeBlock />
