@@ -7,77 +7,79 @@ import RoleBlock from './components/RoleBlock';
 import LocationBlock from './components/LocationBlock';
 import QRBlock from './components/QRBlock';
 import Preloader from './components/Preloader';
-import { YANDEX_DISK_PUBLIC_KEY } from './data';
 
-// Same fetch-as-blob workaround as the sibling `wedding` project: Yandex
-// Disk's download endpoint 403s when a browser's default Referer header is
-// present on a direct <audio src>, so the file is fetched with
-// referrerPolicy: 'no-referrer' and played from a local blob URL instead.
-const YANDEX_DOWNLOAD_API = YANDEX_DISK_PUBLIC_KEY
-  ? `https://cloud-api.yandex.net/v1/disk/public/resources/download?public_key=${encodeURIComponent(YANDEX_DISK_PUBLIC_KEY)}`
-  : null;
+// Metronomy — The Look (Official Audio), played via the YouTube IFrame API —
+// streams from YouTube's licensed player instead of hosting the track
+// ourselves, and (unlike a direct file fetch) starts buffering the instant
+// the API script loads rather than waiting on a full download.
+const WEDDING_SONG_YOUTUBE_ID = 'w-zgXwT8Yyo';
+
+declare global {
+  interface Window {
+    YT: any;
+    onYouTubeIframeAPIReady: () => void;
+  }
+}
 
 export default function App() {
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  // Whether the user has asked to play before the track finished loading —
-  // honored the instant it's ready, so a tap always feels instant instead
-  // of waiting on Yandex Disk.
+  const playerRef = useRef<any>(null);
+  // Whether the user has asked to play before the player finished
+  // initializing — honored the instant it's ready, so a tap always feels
+  // instant instead of waiting on YouTube.
   const wantsToPlayRef = useRef(false);
+  const playerInitStarted = useRef(false);
   const [isMusicFailed, setIsMusicFailed] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isFontsReady, setIsFontsReady] = useState(false);
   const [isTimedOut, setIsTimedOut] = useState(false);
   const [showPreloader, setShowPreloader] = useState(true);
 
-  // Start fetching the background track the moment the app mounts — before
-  // the page is even shown — but this no longer gates the preloader (see
-  // below): the button is clickable immediately, and playback starts the
-  // moment the track is ready rather than making the whole page wait on it.
+  // Load the YouTube IFrame API and mount a hidden player the moment the app
+  // mounts — before the preloader even resolves — so the track is already
+  // buffered by the time it disappears. This no longer gates the preloader
+  // (see below): the button is clickable immediately, and playback starts
+  // the moment the player is ready rather than making the whole page wait.
+  // Guarded with a ref flag so StrictMode's double-invoked effect in dev
+  // doesn't create a second player against the same target node.
   useEffect(() => {
-    if (!YANDEX_DOWNLOAD_API) {
-      setIsMusicFailed(true);
-      return;
-    }
-    let cancelled = false;
-    let audio: HTMLAudioElement | null = null;
-    let objectUrl: string | null = null;
+    if (playerInitStarted.current) return;
+    playerInitStarted.current = true;
 
-    fetch(YANDEX_DOWNLOAD_API)
-      .then((res) => res.json())
-      .then((data: { href?: string }) => {
-        if (cancelled || !data.href) return;
-        return fetch(data.href, { referrerPolicy: 'no-referrer' });
-      })
-      .then((res) => (res && res.ok ? res.blob() : Promise.reject(new Error('Bad response fetching song file'))))
-      .then((blob) => {
-        if (cancelled) return;
-        objectUrl = URL.createObjectURL(blob);
-        audio = new Audio(objectUrl);
-        audio.loop = true;
-        audio.volume = 0.35;
-        audioRef.current = audio;
-        // Keep the play/pause button in sync with the actual audio element —
-        // not just clicks, but also OS/hardware media-key play-pause events,
-        // which the browser applies directly to the element.
-        audio.addEventListener('play', () => setIsPlaying(true));
-        audio.addEventListener('pause', () => setIsPlaying(false));
-        if (wantsToPlayRef.current) {
-          audio.play().catch((err) => {
-            console.warn('Deferred playback blocked by autoplay policy — needs a fresh tap', err);
-            setIsPlaying(false);
-          });
-        }
-      })
-      .catch((err) => {
-        console.warn('Failed to load background track from Yandex Disk', err);
-        if (!cancelled) setIsMusicFailed(true);
+    const createPlayer = () => {
+      playerRef.current = new window.YT.Player('youtube-audio-player', {
+        videoId: WEDDING_SONG_YOUTUBE_ID,
+        playerVars: {
+          autoplay: 0,
+          controls: 0,
+          disablekb: 1,
+          playlist: WEDDING_SONG_YOUTUBE_ID, // required by YT for looping a single video
+          loop: 1,
+        },
+        events: {
+          onReady: (event: any) => {
+            event.target.setVolume(35);
+            if (wantsToPlayRef.current) {
+              event.target.playVideo();
+            }
+          },
+          onStateChange: (event: any) => {
+            if (event.data === window.YT.PlayerState.PLAYING) setIsPlaying(true);
+            else if (event.data === window.YT.PlayerState.PAUSED) setIsPlaying(false);
+          },
+          onError: () => setIsMusicFailed(true),
+        },
       });
-
-    return () => {
-      cancelled = true;
-      if (audio) audio.pause();
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
+
+    if (window.YT && window.YT.Player) {
+      createPlayer();
+    } else {
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      tag.onerror = () => setIsMusicFailed(true);
+      document.head.appendChild(tag);
+      window.onYouTubeIframeAPIReady = createPlayer;
+    }
   }, []);
 
   useEffect(() => {
@@ -106,26 +108,27 @@ export default function App() {
 
   const handleToggleMusic = () => {
     if (isMusicFailed) return;
-    if (!audioRef.current) {
-      // Still loading — remember the request and reflect it optimistically;
-      // the effect above starts playback the instant the track is ready.
+    if (!playerRef.current || typeof playerRef.current.playVideo !== 'function') {
+      // Still initializing — remember the request and reflect it
+      // optimistically; onReady above starts playback the instant it's set up.
       const next = !wantsToPlayRef.current;
       wantsToPlayRef.current = next;
       setIsPlaying(next);
       return;
     }
     if (isPlaying) {
-      audioRef.current.pause();
+      playerRef.current.pauseVideo();
     } else {
-      audioRef.current.play().catch((err) => {
-        console.warn('Playback prevented by browser user activation policy', err);
-      });
+      playerRef.current.playVideo();
     }
   };
 
   return (
     <div className="min-h-screen bg-[var(--color-void)] font-sans antialiased relative overflow-x-hidden">
       {showPreloader && <Preloader ready={isAppReady} />}
+
+      {/* Hidden YouTube player powering the background wedding song */}
+      <div id="youtube-audio-player" className="absolute w-px h-px -left-full overflow-hidden opacity-0 pointer-events-none" aria-hidden="true" />
 
       {/* Page-level decoration — soft blue/black blobs, fixed, showing
           through the glass shell above them. */}

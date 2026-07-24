@@ -10,7 +10,6 @@ export const EVENT_CHAT_URL = 'https://t.me/+I4QiCuNf2gYxYmQy';
 
 export const SONG_ARTIST = 'Metronomy';
 export const SONG_TITLE = 'The Look';
-export const YANDEX_DISK_PUBLIC_KEY = 'https://disk.yandex.ru/d/MqIUAitphA3ixQ';
 
 // Программа дня — можно свободно добавлять/убирать/переставлять пункты,
 // компонент ScheduleBlock просто рендерит этот массив по порядку.
