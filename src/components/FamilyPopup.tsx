@@ -65,9 +65,9 @@ export default function FamilyPopup({
           </p>
         </div>
 
-        <ul className="min-h-0 overflow-y-auto overscroll-contain space-y-2.5 px-6 pt-4 pb-7">
+        <ul className="min-h-0 overflow-y-auto overscroll-contain space-y-2.5 px-6 pt-7 pb-7">
           {special && (
-            <li className="flex items-center justify-between gap-3 rounded-2xl border border-[var(--color-blue-light)]/30 bg-[var(--color-blue)]/10 glow-blue px-4 py-3">
+            <li className="flex items-center justify-between gap-3 rounded-2xl border border-[var(--color-blue-light)]/30 bg-[var(--color-blue)]/10 glow-blue-contained px-4 py-3">
               <span className="font-serif text-lg text-[var(--color-ice)]">{special.name}</span>
               <span className="flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider text-[var(--color-blue-light)] whitespace-nowrap">
                 <Heart size={11} strokeWidth={2} /> {special.label}

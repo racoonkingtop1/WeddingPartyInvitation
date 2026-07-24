@@ -49,11 +49,14 @@ export default function TicketHero() {
                 {guestName ?? 'Дорогой гость'}
               </p>
             </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-[var(--color-blue-light)]">
-                  Роль
-                </span>
+            <div className="min-w-0">
+              <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-[var(--color-blue-light)]">
+                Роль
+              </span>
+              <div className="flex items-center gap-1.5 mt-1 min-w-0">
+                <p className="font-serif italic font-semibold text-xl tracking-wide text-[var(--color-ice)] truncate min-w-0">
+                  {displayRoleTitle}
+                </p>
                 <a
                   href="#role"
                   aria-label="Узнать подробнее о роли"
@@ -63,9 +66,6 @@ export default function TicketHero() {
                   <CircleHelp size={10} strokeWidth={2.25} />
                 </a>
               </div>
-              <p className="font-serif italic font-semibold text-xl tracking-wide text-[var(--color-ice)] mt-1 truncate">
-                {displayRoleTitle}
-              </p>
             </div>
           </div>
 

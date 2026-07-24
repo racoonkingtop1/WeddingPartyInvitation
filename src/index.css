@@ -37,6 +37,23 @@ html {
   .map-neon-filter {
     filter: invert(92%) hue-rotate(180deg) brightness(0.9) contrast(1.15) saturate(1.5);
   }
+  /* Same trick, scoped to the interactive Yandex JS-API map's own raster
+     tile pane (matched by a stable substring — ymaps' pane classes carry a
+     version number we don't want to hardcode) instead of the whole
+     container, so our custom heart Placemark icon keeps its real color
+     instead of being inverted along with the basemap. */
+  .yandex-map-neon [class*="ground-pane"],
+  .yandex-map-neon [class*="tiles-pane"] {
+    filter: invert(92%) hue-rotate(180deg) brightness(0.9) contrast(1.15) saturate(1.5);
+  }
+  /* Visually hides Yandex's own copyright badge/control panes (kept in the
+     DOM, not removed, since attribution is required by their terms) so the
+     only interactive chrome guests see is our own themed +/- zoom pair. */
+  .yandex-map-neon [class*="copyrights-pane"],
+  .yandex-map-neon [class*="controls-pane"] {
+    opacity: 0;
+    pointer-events: none;
+  }
 
   /* Liquid-glass surface — the base material of this redesign. Frosted dark
      panels let the fixed blue/black blobs behind the shell show through. */
@@ -55,6 +72,16 @@ html {
     -webkit-backdrop-filter: blur(30px) saturate(140%);
     border: 1px solid rgba(143, 184, 255, 0.16);
   }
+  /* Floating music pill: half the opacity of glass-panel-strong, made up
+     for with a much heavier blur — legible through blur/saturation of
+     whatever's behind it rather than through opacity, i.e. an actual
+     liquid-glass surface instead of a near-solid one. */
+  .music-pill-glass {
+    background: rgba(8, 13, 24, 0.43);
+    backdrop-filter: blur(44px) saturate(180%);
+    -webkit-backdrop-filter: blur(44px) saturate(180%);
+    border: 1px solid rgba(143, 184, 255, 0.22);
+  }
   /* Small pill buttons/badges */
   .glass-chip {
     background: rgba(143, 184, 255, 0.08);
@@ -64,6 +91,12 @@ html {
   }
   .glow-blue {
     box-shadow: 0 0 28px rgba(62, 123, 250, 0.35);
+  }
+  /* Same glow, tighter radius — for glowing cards that sit inside a
+     scrolling container, where the full-size glow-blue blur gets clipped
+     by the container's own edge before it can fully fade out. */
+  .glow-blue-contained {
+    box-shadow: 0 0 14px rgba(62, 123, 250, 0.35);
   }
 
   /* Fixed, unobtrusive grain texture behind the shell — noise, not a grid.

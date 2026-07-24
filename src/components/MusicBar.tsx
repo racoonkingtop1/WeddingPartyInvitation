@@ -76,7 +76,13 @@ export default function MusicBar({ hasFailed, isPlaying, onToggle }: MusicBarPro
             isStuck ? 'top-3 opacity-100 translate-y-0' : 'top-3 opacity-0 -translate-y-2 pointer-events-none'
           }`}
         >
-          <div className="glass-chip flex items-center gap-2 rounded-full px-4 py-2 w-[260px] shadow-[0_8px_30px_rgba(4,8,20,0.45)]">
+          {/* music-pill-glass (not glass-chip/glass-panel-strong) on purpose:
+              this pill floats directly over the page background wherever
+              the guest has scrolled to, so it needs to stay legible against
+              literally anything behind it — but as a true liquid-glass
+              surface, not a near-opaque one, so legibility comes from a
+              heavier blur rather than from hiding what's behind it. */}
+          <div className="music-pill-glass flex items-center gap-2 rounded-full px-4 py-2 w-[260px] shadow-[0_8px_30px_rgba(4,8,20,0.45)]">
             {renderContent(isStuck)}
           </div>
         </div>,

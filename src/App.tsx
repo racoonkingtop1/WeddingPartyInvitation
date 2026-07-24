@@ -28,19 +28,26 @@ export default function App() {
   // instant instead of waiting on YouTube.
   const wantsToPlayRef = useRef(false);
   const playerInitStarted = useRef(false);
+  // Flips once the silent warm-up play below actually starts streaming —
+  // a ref (not state) because it's read inside the onStateChange closure
+  // captured once at player creation, which would otherwise only ever see
+  // the state's initial value.
+  const isMusicReadyRef = useRef(false);
   const [isMusicFailed, setIsMusicFailed] = useState(false);
+  const [isMusicReady, setIsMusicReady] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isFontsReady, setIsFontsReady] = useState(false);
   const [isTimedOut, setIsTimedOut] = useState(false);
   const [showPreloader, setShowPreloader] = useState(true);
 
   // Load the YouTube IFrame API and mount a hidden player the moment the app
-  // mounts — before the preloader even resolves — so the track is already
-  // buffered by the time it disappears. This no longer gates the preloader
-  // (see below): the button is clickable immediately, and playback starts
-  // the moment the player is ready rather than making the whole page wait.
-  // Guarded with a ref flag so StrictMode's double-invoked effect in dev
-  // doesn't create a second player against the same target node.
+  // mounts — before the preloader even resolves. Unless the user already
+  // tapped play, the track is started muted the instant the player is
+  // ready: that's the only way to make YouTube actually buffer ahead rather
+  // than just cue metadata, so by the time the preloader hands off,
+  // playback is already flowing and a real tap resumes instantly with no
+  // rebuffer. Guarded with a ref flag so StrictMode's double-invoked effect
+  // in dev doesn't create a second player against the same target node.
   useEffect(() => {
     if (playerInitStarted.current) return;
     playerInitStarted.current = true;
@@ -58,13 +65,28 @@ export default function App() {
         events: {
           onReady: (event: any) => {
             event.target.setVolume(35);
-            if (wantsToPlayRef.current) {
-              event.target.playVideo();
+            if (!wantsToPlayRef.current) {
+              event.target.mute();
             }
+            event.target.playVideo();
           },
           onStateChange: (event: any) => {
-            if (event.data === window.YT.PlayerState.PLAYING) setIsPlaying(true);
-            else if (event.data === window.YT.PlayerState.PAUSED) setIsPlaying(false);
+            if (event.data === window.YT.PlayerState.PLAYING) {
+              if (!isMusicReadyRef.current) {
+                isMusicReadyRef.current = true;
+                setIsMusicReady(true);
+                if (!wantsToPlayRef.current) {
+                  // That was the silent warm-up buffer, not a real play —
+                  // stop it and hand control back to the toggle button.
+                  event.target.pauseVideo();
+                  event.target.unMute();
+                  return;
+                }
+              }
+              setIsPlaying(true);
+            } else if (event.data === window.YT.PlayerState.PAUSED) {
+              setIsPlaying(false);
+            }
           },
           onError: () => setIsMusicFailed(true),
         },
@@ -90,15 +112,17 @@ export default function App() {
     }
   }, []);
 
-  // Fonts should resolve almost immediately; this is just a safety net so a
-  // stalled font load can never strand a guest on the loading screen. Music
-  // is intentionally not part of this gate — see the effect above.
+  // Safety net so a stalled font load or a slow/blocked YouTube connection
+  // can never strand a guest on the loading screen forever — it just gives
+  // up on the instant-playback guarantee past this point.
   useEffect(() => {
-    const timeout = setTimeout(() => setIsTimedOut(true), 4000);
+    const timeout = setTimeout(() => setIsTimedOut(true), 6000);
     return () => clearTimeout(timeout);
   }, []);
 
-  const isAppReady = isFontsReady || isTimedOut;
+  // The preloader now waits on the music warm-up too (ready or definitively
+  // failed), not just fonts — see the effect above for why.
+  const isAppReady = (isFontsReady && (isMusicReady || isMusicFailed)) || isTimedOut;
 
   useEffect(() => {
     if (!isAppReady) return;
