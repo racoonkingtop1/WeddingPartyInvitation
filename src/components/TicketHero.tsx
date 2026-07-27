@@ -36,8 +36,12 @@ export default function TicketHero() {
         </p>
       </div>
 
-      {/* Ticket card — purely decorative, auto-filled from the invite link */}
-      <div className="relative ticket-notch rounded-[28px] shadow-xl shadow-black/30 overflow-hidden glass-panel">
+      {/* Ticket card — purely decorative, auto-filled from the invite link.
+          @container so the mascot block below can shrink itself off the
+          card's own width rather than the viewport's — the card is
+          already narrower than the screen once its own padding is
+          subtracted, and that's the width actually squeezing the role text. */}
+      <div className="relative ticket-notch rounded-[28px] shadow-xl shadow-black/30 overflow-hidden glass-panel @container">
         <div className="grid grid-cols-[1fr_auto] gap-5 p-6">
           {/* Left: name + role, read from the URL */}
           <div className="flex flex-col justify-center gap-5 min-w-0">
@@ -53,15 +57,19 @@ export default function TicketHero() {
               <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-[var(--color-blue-light)]">
                 Роль
               </span>
-              <div className="flex items-center gap-1.5 mt-1 min-w-0">
-                <p className="font-serif italic font-semibold text-xl tracking-wide text-[var(--color-ice)] truncate min-w-0">
+              {/* No truncate here on purpose — the role title must always
+                  read in full; the mascot block on the right shrinks
+                  itself first to make room, and wrapping to a second line
+                  is the fallback for titles too long even for that. */}
+              <div className="flex items-start gap-1.5 mt-1 min-w-0">
+                <p className="font-serif italic font-semibold text-xl tracking-wide text-[var(--color-ice)] min-w-0">
                   {displayRoleTitle}
                 </p>
                 <a
                   href="#role"
                   aria-label="Узнать подробнее о роли"
                   title="Узнать подробнее о роли"
-                  className="glass-chip w-4 h-4 rounded-full flex items-center justify-center text-[var(--color-blue-light)] hover:bg-[var(--color-blue)]/20 hover:text-[var(--color-ice)] transition-colors shrink-0"
+                  className="glass-chip w-4 h-4 rounded-full flex items-center justify-center text-[var(--color-blue-light)] hover:bg-[var(--color-blue)]/20 hover:text-[var(--color-ice)] transition-colors shrink-0 mt-[3px]"
                 >
                   <CircleHelp size={10} strokeWidth={2.25} />
                 </a>
@@ -69,14 +77,13 @@ export default function TicketHero() {
             </div>
           </div>
 
-          {/* Right: mascot + date */}
-          <div className="flex flex-col items-center justify-center gap-2 shrink-0">
-            <div className="w-24 h-24 rounded-2xl bg-[var(--color-abyss)] ring-1 ring-[var(--color-blue-light)]/15 flex items-center justify-center overflow-hidden">
-              <WelcomeIcon className="w-14 h-14" />
+          {/* Right: mascot only — shrinks in two steps as the card itself
+              narrows, so the role text on the left always keeps enough
+              room instead of being cut off. */}
+          <div className="flex items-center justify-center shrink-0">
+            <div className="w-24 h-24 @max-[420px]:w-20 @max-[420px]:h-20 @max-[340px]:w-16 @max-[340px]:h-16 rounded-2xl bg-[var(--color-abyss)] ring-1 ring-[var(--color-blue-light)]/15 flex items-center justify-center overflow-hidden transition-[width,height] duration-200">
+              <WelcomeIcon className="w-14 h-14 @max-[420px]:w-11 @max-[420px]:h-11 @max-[340px]:w-9 @max-[340px]:h-9 transition-[width,height] duration-200" />
             </div>
-            <span className="font-mono text-[11px] tracking-[0.1em] text-[var(--color-mist)] whitespace-nowrap">
-              {EVENT_DATE_SHORT}
-            </span>
           </div>
         </div>
 
@@ -88,7 +95,7 @@ export default function TicketHero() {
         {/* Stub */}
         <div className="px-6 pb-6 pt-2 flex items-center justify-between font-mono text-[10px] uppercase tracking-wider text-[var(--color-mist)]">
           <span>№ {guestTicketNumber(guest)} · {isSpecial ? 'SPECIAL' : 'GUEST'} PASS</span>
-          <span>16:00</span>
+          <span>{EVENT_DATE_SHORT}</span>
         </div>
       </div>
 
