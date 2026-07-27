@@ -79,8 +79,10 @@ export default function TicketHero() {
 
           {/* Right: mascot only — shrinks in two steps as the card itself
               narrows, so the role text on the left always keeps enough
-              room instead of being cut off. */}
-          <div className="flex items-center justify-center shrink-0">
+              room instead of being cut off. Pinned to the top of the row
+              (not vertically centered against the left column) so it lines
+              up with the "Кому" label above rather than floating mid-card. */}
+          <div className="flex items-start justify-center shrink-0 self-start">
             <div className="w-24 h-24 @max-[420px]:w-20 @max-[420px]:h-20 @max-[340px]:w-16 @max-[340px]:h-16 rounded-2xl bg-[var(--color-abyss)] ring-1 ring-[var(--color-blue-light)]/15 flex items-center justify-center overflow-hidden transition-[width,height] duration-200">
               <WelcomeIcon className="w-14 h-14 @max-[420px]:w-11 @max-[420px]:h-11 @max-[340px]:w-9 @max-[340px]:h-9 transition-[width,height] duration-200" />
             </div>
