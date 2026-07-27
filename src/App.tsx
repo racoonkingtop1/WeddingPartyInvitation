@@ -77,8 +77,10 @@ export default function App() {
                 setIsMusicReady(true);
                 if (!wantsToPlayRef.current) {
                   // That was the silent warm-up buffer, not a real play —
-                  // stop it and hand control back to the toggle button.
+                  // stop it, rewind to the start, and hand control back to
+                  // the toggle button so the actual first play starts clean.
                   event.target.pauseVideo();
+                  event.target.seekTo(0, true);
                   event.target.unMute();
                   return;
                 }

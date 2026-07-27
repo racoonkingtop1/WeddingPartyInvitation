@@ -15,22 +15,52 @@ export const SONG_TITLE = 'The Look';
 // компонент ScheduleBlock просто рендерит этот массив по порядку.
 export const SCHEDULE: ScheduleItem[] = [
   {
+    id: 'registration',
+    time: '14:30',
+    title: 'Регистрация',
+    icon: 'ClipboardList',
+  },
+  {
     id: 'arrival',
     time: '16:00',
-    title: 'Заезд гостей',
-    description: 'Встречаем, рассаживаемся, знакомимся с площадкой.',
+    title: 'Заезд в домик',
+    icon: 'Home',
   },
   {
     id: 'speech',
     time: '17:00',
     title: 'Свадебная речь',
-    description: 'Тёплые слова от молодожёнов и первые тосты.',
+    icon: 'Mic2',
   },
   {
     id: 'dinner',
-    time: '18:15',
+    time: '18:30',
     title: 'Начало ужина',
-    description: 'Рассаживаемся за столы — праздничный ужин начинается.',
+    icon: 'UtensilsCrossed',
+  },
+  {
+    id: 'party',
+    time: '19:00',
+    title: 'Развлекательная программа',
+    icon: 'PartyPopper',
+  },
+  {
+    id: 'sauna',
+    time: '21:00',
+    title: 'Топим баню',
+    icon: 'Flame',
+  },
+  {
+    id: 'cake',
+    time: '22:00',
+    title: 'Едим торт',
+    icon: 'CakeSlice',
+  },
+  {
+    id: 'free-time',
+    time: '23:00',
+    title: 'Свободный отдых',
+    icon: 'Moon',
   },
 ];
 
